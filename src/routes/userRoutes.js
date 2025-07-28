@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { User } from "../models/userModel.js";
+import upload from "../middlewares/multerConfig.js";
 
 const UserRoutes = Router();
 
@@ -23,7 +24,7 @@ UserRoutes.get("/", async(req, res) => {
 });
 
 
-UserRoutes.post("/add", async(req,res) => {
+UserRoutes.post("/add", upload.single("profile"), async(req,res) => {
 
     try {
         const {username} = req.body;
@@ -34,8 +35,12 @@ UserRoutes.post("/add", async(req,res) => {
             })
         }
 
+        // fetching uploaded profile url
+        const profilePicUrl = req.file?.path; // Cloudinary gives URL in .path
+
         const userAdded = await User.create({
-            username
+            username,
+            imageUrl:   profilePicUrl || ""
         })
     
         res.status(200).json({

@@ -26,7 +26,7 @@ ClaimRoutes.post("/", async(req,res) => {
  
      // adding claim entry, to maintain history
      const claimHistory = await Claim.create({
-         userId: foundUser.id,
+         userId: foundUser._id,
          pointsClaimed
      })
  
