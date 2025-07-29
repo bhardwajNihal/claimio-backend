@@ -6,9 +6,15 @@ import { io } from "../index.js";
 const ClaimRoutes = Router();
 
 ClaimRoutes.get("/history", async (req, res) => {
+
+    const { skip=0, limit=10 } = req.query;
   try {
+    const totalClaims = await Claim.countDocuments();
+
     const pastClaims = await Claim.find()
       .sort({ claimedAt: -1 }) // sorting in descending order
+      .skip(parseInt(skip))
+      .limit(parseInt(limit))
       .populate({
         // populating with user's required details
         path: "userId",
@@ -16,6 +22,7 @@ ClaimRoutes.get("/history", async (req, res) => {
       });
 
     res.status(200).json({
+      totalClaims,
       pastClaims,
     });
   } catch (error) {
@@ -52,19 +59,17 @@ ClaimRoutes.post("/", async (req, res) => {
       pointsClaimed,
     });
 
-
     // emitting socket event, sending updated leaderboard to client
-    const users = await User.find().sort({points : -1});
-    const updatedLeaderboard = users.map((user,index) => {
-        return {
-            username: user.username,
-            profile : user.imageUrl,
-            totalPoints : user.points,
-            rank: index+1
-        }
-    })
+    const users = await User.find().sort({ points: -1 });
+    const updatedLeaderboard = users.map((user, index) => {
+      return {
+        username: user.username,
+        profile: user.imageUrl,
+        totalPoints: user.points,
+        rank: index + 1,
+      };
+    });
     io.emit("leaderboard-update", updatedLeaderboard);
-
 
     res.status(200).json({
       message: "Points claimed successfully!",
