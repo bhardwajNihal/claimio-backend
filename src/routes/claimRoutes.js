@@ -4,6 +4,31 @@ import { Claim } from "../models/claimModel.js";
 
 const ClaimRoutes = Router();
 
+ClaimRoutes.get("/history", async(req, res) => {
+
+    try {
+
+        const pastClaims = await Claim
+        .find()
+        .sort({claimedAt : -1})         // sorting in descending order
+        .populate({                     // populating with user's required details
+            path: "userId",
+            select: "username imageUrl"
+        })
+
+        res.status(200).json({
+            pastClaims
+        })
+        
+    } catch (error) {
+        console.error("error fetching past claims!", error);
+        res.status(500).json({
+            message: "Error fetching past claims!",
+            error: error.message
+        })
+    }
+} )
+
 ClaimRoutes.post("/", async(req,res) => {
 
    try {

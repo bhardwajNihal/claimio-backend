@@ -13,6 +13,7 @@ LeaderboardRoutes.get("/", async(req, res) => {
         const leaderboard = users.map((user,index) => {
             return {
                 username: user.username,
+                profile : user.imageUrl,
                 totalPoints : user.points,
                 rank: index+1
             }
