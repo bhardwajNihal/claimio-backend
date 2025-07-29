@@ -30,7 +30,7 @@ UserRoutes.post("/add", upload.single("profile"), async(req,res) => {
         const {username} = req.body;
         
         if(!username){
-            res.status(400).json({
+            return res.status(400).json({
                 message: "username is required!"
             })
         }
