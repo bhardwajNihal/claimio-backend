@@ -28,7 +28,7 @@ UserRoutes.post("/add", upload.single("profile"), async(req,res) => {
 
     try {
         const {username} = req.body;
-
+        
         if(!username){
             res.status(400).json({
                 message: "username is required!"
@@ -36,8 +36,8 @@ UserRoutes.post("/add", upload.single("profile"), async(req,res) => {
         }
 
         // fetching uploaded profile url
-        const profilePicUrl = req.file?.path; // Cloudinary gives URL in .path
-
+        const profilePicUrl = req.file?.path; // Cloudinary returns uploaded image url in .path
+        
         const userAdded = await User.create({
             username,
             imageUrl:   profilePicUrl || ""
